@@ -1,17 +1,12 @@
-import { Code2 } from 'lucide-react'
+import { ArrowRight, Code2 } from 'lucide-react'
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { supportCase } from '@/content/cases'
 import { projects } from '@/content/projects'
 
 export const metadata: Metadata = {
   title: 'Work',
 }
-
-const caseColumns = [
-  { label: 'Symptoms', items: supportCase.symptoms },
-  { label: 'Evidence', items: supportCase.evidence },
-  { label: 'Troubleshooting steps', items: supportCase.troubleshootingSteps },
-] as const
 
 export default function WorkPage() {
   return (
@@ -66,43 +61,24 @@ export default function WorkPage() {
       </section>
 
       <section aria-labelledby="case-heading">
-        <h2 id="case-heading" className="text-balance font-heading text-3xl font-semibold text-ink">
-          {supportCase.title}
+        <h2
+          id="case-heading"
+          className="text-sm font-semibold uppercase tracking-wide text-ink-muted"
+        >
+          Case notes
         </h2>
-        <p className="mt-1 text-xs uppercase tracking-wide text-ink-muted">
-          {supportCase.severity}
-        </p>
+        <h3 className="mt-3 text-balance font-heading text-2xl font-semibold text-ink">
+          {supportCase.title}
+        </h3>
+        <p className="mt-1 text-xs uppercase tracking-wide text-ink-muted">{supportCase.role}</p>
         <p className="mt-4 max-w-(--measure) text-pretty text-ink">{supportCase.summary}</p>
-
-        <div className="mt-8 grid gap-8 sm:grid-cols-3">
-          {caseColumns.map((column) => (
-            <div key={column.label}>
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-ink-muted">
-                {column.label}
-              </h3>
-              <ul className="mt-3 list-inside list-disc text-sm text-ink-muted">
-                {column.items.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-8 grid gap-8 sm:grid-cols-2">
-          <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wide text-ink-muted">
-              Likely root cause
-            </h3>
-            <p className="mt-2 text-sm text-ink-muted">{supportCase.likelyRootCause}</p>
-          </div>
-          <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wide text-ink-muted">
-              Customer summary
-            </h3>
-            <p className="mt-2 text-sm text-ink-muted">{supportCase.customerSummary}</p>
-          </div>
-        </div>
+        <Link
+          href={`/work/${supportCase.slug}`}
+          className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-ink underline underline-offset-4 hover:text-accent"
+        >
+          Read the full case
+          <ArrowRight size={16} aria-hidden="true" />
+        </Link>
       </section>
     </div>
   )

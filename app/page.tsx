@@ -79,7 +79,7 @@ export default function HomePage() {
           {supportCase.summary}
         </p>
         <Link
-          href="/work"
+          href={`/work/${supportCase.slug}`}
           className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-ink underline underline-offset-4 hover:text-accent"
         >
           Read the full case
