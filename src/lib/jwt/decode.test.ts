@@ -1,15 +1,29 @@
 import { describe, expect, it } from 'vitest'
 import { decodeJwt } from './decode'
 
-// Fixtures below have a fake, unverified signature segment - decodeJwt never checks it
-// (there is no signing key available client-side, and this tool explicitly does not claim
-// to verify signatures).
-const VALID_JWT =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE3ODUwMTM2NjQsInNjb3BlIjoicmVhZCB3cml0ZSJ9.fakesignature'
-const EXPIRED_JWT =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiZXhwIjoxNzg1MDA2NDY0fQ.fakesignature'
-const NO_EXP_JWT =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6Ik5vIEV4cGlyeSJ9.fakesignature'
+// Fixtures are built at test-run time relative to the current clock, not hardcoded absolute
+// timestamps - an earlier version of this file baked in a fixed future exp, which
+// (correctly, in hindsight) started failing once real time caught up to it.
+function base64UrlEncode(value: Record<string, unknown>): string {
+  return Buffer.from(JSON.stringify(value), 'utf8').toString('base64url')
+}
+
+function makeJwt(payload: Record<string, unknown>): string {
+  const header = { alg: 'HS256', typ: 'JWT' }
+  return `${base64UrlEncode(header)}.${base64UrlEncode(payload)}.fakesignature`
+}
+
+const NOW_SECONDS = Math.floor(Date.now() / 1000)
+
+const VALID_JWT = makeJwt({
+  sub: '1234567890',
+  name: 'John Doe',
+  iat: NOW_SECONDS - 100,
+  exp: NOW_SECONDS + 3600,
+  scope: 'read write',
+})
+const EXPIRED_JWT = makeJwt({ sub: '1234567890', exp: NOW_SECONDS - 3600 })
+const NO_EXP_JWT = makeJwt({ sub: '1234567890', name: 'No Expiry' })
 
 describe('decodeJwt', () => {
   it('decodes a valid token into header, claims, expiry, and scope', () => {
