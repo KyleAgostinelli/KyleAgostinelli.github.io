@@ -19,10 +19,8 @@ import {
   type ContactFormValues,
 } from './schema'
 
-const inputClassName =
-  'rounded-md border border-neutral-300 px-3 py-2 dark:border-neutral-700 dark:bg-neutral-900'
-const bannerClassName =
-  'rounded-md border border-neutral-300 px-4 py-3 text-sm dark:border-neutral-700'
+const inputClassName = 'rounded-md border border-line bg-canvas px-3 py-2 text-ink'
+const bannerClassName = 'rounded-md border border-line px-4 py-3 text-sm text-ink'
 
 function FieldError({ id, message }: { id: string; message: string | undefined }) {
   if (!message) return null
@@ -43,7 +41,10 @@ function FallbackBanner({ mailtoHref }: { mailtoHref: string }) {
     <p role="status" className={bannerClassName}>
       No email service is configured yet.{' '}
       {parsed.success ? (
-        <a href={parsed.data} className="underline underline-offset-4">
+        <a
+          href={parsed.data}
+          className="text-accent underline underline-offset-4 hover:text-accent-hover"
+        >
           Click here to send a prefilled email instead.
         </a>
       ) : (
@@ -149,7 +150,7 @@ export function ContactForm() {
         <button
           type="submit"
           disabled={isPending}
-          className="inline-flex w-fit items-center gap-2 rounded-md bg-neutral-900 px-4 py-2 text-sm text-white dark:bg-neutral-50 dark:text-neutral-900"
+          className="inline-flex w-fit items-center gap-2 rounded-md bg-accent px-4 py-2 text-sm text-accent-contrast transition-colors hover:bg-accent-hover disabled:opacity-60"
         >
           <Mail size={16} aria-hidden="true" />
           {isPending ? 'Sending…' : 'Send message'}

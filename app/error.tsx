@@ -11,8 +11,8 @@ export default function Error({
 }) {
   return (
     <div className="flex flex-col items-start gap-4 py-16">
-      <h1 className="text-2xl font-semibold">Something went wrong</h1>
-      <p className="text-neutral-600 dark:text-neutral-400">
+      <h1 className="font-heading text-2xl font-semibold text-ink">Something went wrong</h1>
+      <p className="text-ink-muted">
         {error.digest
           ? `Reference: ${error.digest}`
           : 'An unexpected error occurred while rendering this page.'}
@@ -20,7 +20,7 @@ export default function Error({
       <button
         type="button"
         onClick={reset}
-        className="rounded-md border border-neutral-300 px-4 py-2 text-sm dark:border-neutral-700"
+        className="rounded-md border border-line px-4 py-2 text-sm text-ink hover:border-accent hover:text-accent"
       >
         Try again
       </button>

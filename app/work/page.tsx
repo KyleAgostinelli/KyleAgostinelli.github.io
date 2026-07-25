@@ -17,27 +17,24 @@ export default function WorkPage() {
   return (
     <div className="flex flex-col gap-14">
       <section>
-        <h1 className="text-3xl font-semibold">Project</h1>
-        <p className="mt-2 max-w-2xl text-neutral-600 dark:text-neutral-400">
+        <h1 className="reveal text-balance font-heading text-3xl font-semibold text-ink">
+          Project
+        </h1>
+        <p className="mt-2 max-w-(--measure) text-pretty text-ink-muted">
           The clearest current example of how I work with unfamiliar code, typed systems, and real
           infrastructure.
         </p>
 
         <div className="mt-8 flex flex-col gap-10">
           {projects.map((project) => (
-            <article
-              key={project.name}
-              className="border-t border-neutral-200 pt-6 dark:border-neutral-800"
-            >
-              <p className="text-xs uppercase tracking-wide text-neutral-500">{project.stage}</p>
-              <h2 className="mt-1 text-xl font-semibold">{project.name}</h2>
-              <p className="mt-2 max-w-2xl text-neutral-800 dark:text-neutral-200">
-                {project.summary}
-              </p>
-              <p className="mt-2 max-w-2xl text-neutral-600 dark:text-neutral-400">
+            <article key={project.name} className="border-t border-line pt-6">
+              <p className="text-xs uppercase tracking-wide text-ink-muted">{project.stage}</p>
+              <h2 className="mt-1 font-heading text-xl font-semibold text-ink">{project.name}</h2>
+              <p className="mt-2 max-w-(--measure) text-pretty text-ink">{project.summary}</p>
+              <p className="mt-2 max-w-(--measure) text-pretty text-ink-muted">
                 {project.supportAngle}
               </p>
-              <ul className="mt-4 list-inside list-disc text-sm text-neutral-700 dark:text-neutral-300">
+              <ul className="mt-4 list-inside list-disc text-sm text-ink-muted">
                 {project.details.map((detail) => (
                   <li key={detail}>{detail}</li>
                 ))}
@@ -46,7 +43,7 @@ export default function WorkPage() {
                 {project.signals.map((signal) => (
                   <span
                     key={signal}
-                    className="rounded-full border border-neutral-300 px-3 py-1 text-xs text-neutral-700 dark:border-neutral-700 dark:text-neutral-300"
+                    className="rounded-full border border-line px-3 py-1 text-xs text-ink-muted"
                   >
                     {signal}
                   </span>
@@ -57,7 +54,7 @@ export default function WorkPage() {
                   href={project.repoUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="mt-5 inline-flex items-center gap-2 text-sm font-medium underline underline-offset-4"
+                  className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-ink underline underline-offset-4 hover:text-accent"
                 >
                   <Code2 size={15} aria-hidden="true" />
                   View source
@@ -69,23 +66,21 @@ export default function WorkPage() {
       </section>
 
       <section aria-labelledby="case-heading">
-        <h2 id="case-heading" className="text-3xl font-semibold">
+        <h2 id="case-heading" className="text-balance font-heading text-3xl font-semibold text-ink">
           {supportCase.title}
         </h2>
-        <p className="mt-1 text-xs uppercase tracking-wide text-neutral-500">
+        <p className="mt-1 text-xs uppercase tracking-wide text-ink-muted">
           {supportCase.severity}
         </p>
-        <p className="mt-4 max-w-2xl text-neutral-800 dark:text-neutral-200">
-          {supportCase.summary}
-        </p>
+        <p className="mt-4 max-w-(--measure) text-pretty text-ink">{supportCase.summary}</p>
 
         <div className="mt-8 grid gap-8 sm:grid-cols-3">
           {caseColumns.map((column) => (
             <div key={column.label}>
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-neutral-500">
+              <h3 className="text-sm font-semibold uppercase tracking-wide text-ink-muted">
                 {column.label}
               </h3>
-              <ul className="mt-3 list-inside list-disc text-sm text-neutral-700 dark:text-neutral-300">
+              <ul className="mt-3 list-inside list-disc text-sm text-ink-muted">
                 {column.items.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
@@ -96,20 +91,16 @@ export default function WorkPage() {
 
         <div className="mt-8 grid gap-8 sm:grid-cols-2">
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wide text-neutral-500">
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-ink-muted">
               Likely root cause
             </h3>
-            <p className="mt-2 text-sm text-neutral-700 dark:text-neutral-300">
-              {supportCase.likelyRootCause}
-            </p>
+            <p className="mt-2 text-sm text-ink-muted">{supportCase.likelyRootCause}</p>
           </div>
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wide text-neutral-500">
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-ink-muted">
               Customer summary
             </h3>
-            <p className="mt-2 text-sm text-neutral-700 dark:text-neutral-300">
-              {supportCase.customerSummary}
-            </p>
+            <p className="mt-2 text-sm text-ink-muted">{supportCase.customerSummary}</p>
           </div>
         </div>
       </section>
