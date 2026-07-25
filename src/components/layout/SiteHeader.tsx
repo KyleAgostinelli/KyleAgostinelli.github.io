@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { profile } from '@/content/profile'
 import { MobileNav, type NavItem } from './MobileNav'
+import { ThemeToggle } from './ThemeToggle'
 
 const navItems: NavItem[] = [
   { label: 'Home', href: '/' },
@@ -11,28 +12,31 @@ const navItems: NavItem[] = [
 
 export function SiteHeader() {
   return (
-    <header className="border-b border-neutral-200 dark:border-neutral-800">
+    <header className="border-b border-line">
       <div className="mx-auto flex h-20 w-full max-w-5xl items-center justify-between gap-6 px-4 sm:px-6">
-        <Link href="/" className="text-lg font-semibold text-neutral-900 dark:text-neutral-50">
+        <Link href="/" className="reveal font-heading text-lg font-semibold text-ink">
           {profile.name}
         </Link>
 
-        <nav aria-label="Primary" className="hidden md:block">
-          <ul className="flex items-center gap-7">
-            {navItems.map((item) => (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  className="text-sm uppercase tracking-wide text-neutral-700 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-neutral-50"
-                >
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        <div className="reveal flex items-center gap-5" style={{ animationDelay: '60ms' }}>
+          <nav aria-label="Primary" className="hidden md:block">
+            <ul className="flex items-center gap-7">
+              {navItems.map((item) => (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className="text-sm uppercase tracking-wide text-ink-muted transition-colors hover:text-accent"
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
 
-        <MobileNav navItems={navItems} />
+          <ThemeToggle />
+          <MobileNav navItems={navItems} />
+        </div>
       </div>
     </header>
   )

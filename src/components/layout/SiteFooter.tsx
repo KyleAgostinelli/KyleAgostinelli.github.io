@@ -8,8 +8,8 @@ const socialLinks = [
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-neutral-200 dark:border-neutral-800">
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 py-6 text-sm text-neutral-600 sm:flex-row sm:items-center sm:justify-between sm:px-6 dark:text-neutral-400">
+    <footer className="border-t border-line">
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 py-6 text-sm text-ink-muted sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <p>
           {profile.name} - {profile.location}
         </p>
@@ -22,7 +22,7 @@ export function SiteFooter() {
                 href={item.href}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-1.5"
+                className="inline-flex items-center gap-1.5 transition-colors hover:text-accent"
               >
                 <Icon size={14} aria-hidden="true" />
                 {item.label}

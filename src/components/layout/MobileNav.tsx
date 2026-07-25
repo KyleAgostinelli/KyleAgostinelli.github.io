@@ -68,17 +68,13 @@ export function MobileNav({ navItems }: { navItems: NavItem[] }) {
         onClick={() => {
           setIsOpen((open) => !open)
         }}
-        className="inline-flex h-11 w-11 items-center justify-center rounded-md border border-neutral-300 text-neutral-900 dark:border-neutral-700 dark:text-neutral-100"
+        className="inline-flex h-11 w-11 items-center justify-center rounded-md border border-line text-ink"
       >
         {isOpen ? <X size={20} aria-hidden="true" /> : <Menu size={20} aria-hidden="true" />}
       </button>
 
       {isOpen ? (
-        <div
-          id={panelId}
-          ref={panelRef}
-          className="border-t border-neutral-200 py-2 dark:border-neutral-800"
-        >
+        <div id={panelId} ref={panelRef} className="border-t border-line py-2">
           <nav aria-label="Mobile">
             <ul className="flex flex-col">
               {navItems.map((item) => (
@@ -88,7 +84,7 @@ export function MobileNav({ navItems }: { navItems: NavItem[] }) {
                     onClick={() => {
                       setIsOpen(false)
                     }}
-                    className="block py-3 text-sm uppercase tracking-wide text-neutral-700 dark:text-neutral-300"
+                    className="block py-3 text-sm uppercase tracking-wide text-ink-muted transition-colors hover:text-accent"
                   >
                     {item.label}
                   </Link>
