@@ -33,6 +33,10 @@ FORMSPREE_ENDPOINT=https://formspree.io/f/YOUR_FORM_ID
 
 ## Deployment
 
-The production target is Vercel. The previous GitHub Pages workflow
-(`.github/workflows/deploy.yml.disabled`) is kept on disk, disabled, until the Vercel domain
-is verified live.
+The live site is on Vercel: https://kyleagostinelliportfolio.vercel.app/
+
+`kyleagostinelli.github.io` (this repo's GitHub Pages site) is a static redirect only -
+`gh-pages-redirect/index.html`, deployed by `.github/workflows/deploy.yml` - so the URL
+already on Kyle's resume forwards to the real site instead of 404ing or serving a stale
+build. It is not the app itself; GitHub Pages can't run this app's server-side pieces
+(API routes, server actions, cookie-based theme) at all.
