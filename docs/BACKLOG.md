@@ -46,3 +46,30 @@ checkpoint to re-run `npm audit` against, not a trigger for this specific findin
 **Revisit:** re-run `npm audit` after any Next.js patch release. If Next bumps its internal
 `postcss`/`sharp` versions, or `eslint-config-next` bumps past the vulnerable `eslint`
 range, this resolves itself with a routine `npm update` and this entry gets deleted.
+
+## npm audit: 8 more findings added by `@lhci/cli` (since Phase 5)
+
+Installing `@lhci/cli` for Lighthouse CI (`lighthouserc.json`,
+`.github/workflows/ci.yml`) pulled in `chrome-launcher`, `inquirer`, `tmp`, and `uuid` as
+transitive dependencies, bringing `npm audit` from 12 findings to 20:
+
+1. **`tmp` (via `chrome-launcher` and `inquirer` → `external-editor`)** - arbitrary temp
+   file/directory write via a symlinked `dir` parameter, and a path-traversal via
+   unsanitized prefix/postfix.
+2. **`uuid`** - missing buffer bounds check in v3/v5/v6 when a buffer is provided.
+3. **`chrome-launcher` → `rimraf` → `glob` → `minimatch` → `brace-expansion`** - the same
+   `brace-expansion` DoS already tracked above, reached through a second dependency path.
+4. **`inquirer`/`external-editor`** - low severity, inherited from the `tmp` finding above.
+
+**Why not fixed.** All of these are internal to `@lhci/cli`'s own CLI machinery (its
+interactive prompts and its Chrome-launching temp profile handling) - not something this
+project's code calls into or can patch independently without `npm overrides` fighting
+lhci's own dependency resolution, for a tool that only ever runs in CI/local dev.
+
+**Actual exposure, as of this repo today:** `@lhci/cli` is a devDependency that runs exactly
+once per CI run, against `localhost` URLs this repo itself serves, with no user-supplied
+input of any kind (no prompts are answered interactively in CI, no attacker controls the
+temp directory name or contents). None of it ships to a visitor's browser.
+
+**Revisit:** re-run `npm audit` whenever `@lhci/cli` is bumped; a version pinning updated
+`chrome-launcher`/`tmp`/`uuid` resolves this without any change on this project's side.

@@ -36,3 +36,6 @@ out/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+
+# Lighthouse CI - reports only, not the budget definitions (bundle-budget.json is committed)
+.lighthouseci/

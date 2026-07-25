@@ -33,7 +33,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           Skip to content
         </a>
         <SiteHeader />
-        <main id="content" className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6">
+        {/* tabIndex={-1} lets the skip link above actually move focus here, not just scroll to it */}
+        <main
+          id="content"
+          tabIndex={-1}
+          className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6 focus:outline-none"
+        >
           {children}
         </main>
         <SiteFooter />
