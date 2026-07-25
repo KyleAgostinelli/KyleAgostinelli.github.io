@@ -1,1 +1,203 @@
 @import 'tailwindcss';
+
+/*
+ * Token layer. Neutral ramp and accent scale are OKLCH, verified for WCAG AA contrast in
+ * src/styles/palette.ts / palette.test.ts - if a value changes here, change it there too.
+ * Semantic roles (--color-canvas, --color-ink, etc.) are what components actually use; the
+ * light-mode values below are the defaults, overridden per-mode further down. Named
+ * "canvas/ink/line" rather than "bg/fg/border" so the generated Tailwind utilities read as
+ * `bg-canvas` / `text-ink` / `border-line` instead of the awkward `bg-bg` / `text-fg`.
+ */
+@theme {
+  /* Neutral ramp - 11 steps, faintly cool-gray (hue 260), not `gray-400` guesses. */
+  --color-neutral-50: oklch(0.985 0.002 260);
+  --color-neutral-100: oklch(0.967 0.003 260);
+  --color-neutral-200: oklch(0.92 0.004 260);
+  --color-neutral-300: oklch(0.85 0.006 260);
+  --color-neutral-400: oklch(0.71 0.008 260);
+  --color-neutral-500: oklch(0.56 0.012 260);
+  --color-neutral-600: oklch(0.44 0.014 260);
+  --color-neutral-700: oklch(0.35 0.014 260);
+  --color-neutral-800: oklch(0.27 0.012 260);
+  --color-neutral-900: oklch(0.2 0.01 260);
+  --color-neutral-950: oklch(0.14 0.008 260);
+
+  /* One accent color (hue 250). Used for interactive states and almost nothing else. */
+  --color-accent-400: oklch(0.7 0.14 250);
+  --color-accent-500: oklch(0.6 0.16 250);
+  --color-accent-600: oklch(0.5 0.17 250);
+  --color-accent-700: oklch(0.42 0.16 250);
+
+  --color-canvas: var(--color-neutral-50);
+  --color-ink: var(--color-neutral-950);
+  --color-ink-muted: var(--color-neutral-600);
+  --color-line: var(--color-neutral-200);
+  --color-accent: var(--color-accent-600);
+  --color-accent-hover: var(--color-accent-700);
+  --color-accent-contrast: var(--color-neutral-50);
+
+  /* Type scale - modular, 1.25 ratio anchored at 1rem. The bottom two steps are nudged up
+     for legibility rather than followed mathematically (the literal ratio gives ~10px for
+     "xs", too small to be a real UI size). */
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1.5rem;
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.5rem;
+  --text-base: 1rem;
+  --text-base--line-height: 1.75rem;
+  --text-lg: 1.25rem;
+  --text-lg--line-height: 1.875rem;
+  --text-xl: 1.563rem;
+  --text-xl--line-height: 2rem;
+  --text-2xl: 1.953rem;
+  --text-2xl--line-height: 2.25rem;
+  --text-3xl: 2.441rem;
+  --text-3xl--line-height: 2.75rem;
+  --text-4xl: 3.052rem;
+  --text-4xl--line-height: 3.25rem;
+  --text-5xl: 3.815rem;
+  --text-5xl--line-height: 3.9rem;
+
+  /* Two families, loaded via next/font in src/fonts.ts, which sets these on <html>. */
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-heading-serif), ui-serif, Georgia, serif;
+
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+
+  /* Restrained, neutral shadows - no colored glow. */
+  --shadow-sm: 0 1px 2px oklch(0 0 0 / 0.05);
+  --shadow-md: 0 4px 12px oklch(0 0 0 / 0.08);
+
+  /* Body copy measure cap (~68 characters). */
+  --measure: 68ch;
+}
+
+:root {
+  color-scheme: light;
+}
+
+/* System preference, only when the visitor hasn't made an explicit choice (no cookie yet -
+   see src/lib/theme.ts / theme-actions.ts). Server-read on every request, so there's no
+   client-side flash while JS decides which mode to apply. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    color-scheme: dark;
+    --color-canvas: var(--color-neutral-950);
+    --color-ink: var(--color-neutral-50);
+    --color-ink-muted: var(--color-neutral-400);
+    --color-line: var(--color-neutral-800);
+    --color-accent: var(--color-accent-400);
+    --color-accent-hover: var(--color-accent-500);
+    --color-accent-contrast: var(--color-neutral-950);
+  }
+}
+
+/* Explicit choice, persisted via the `theme` cookie and read server-side in app/layout.tsx. */
+[data-theme='dark'] {
+  color-scheme: dark;
+  --color-canvas: var(--color-neutral-950);
+  --color-ink: var(--color-neutral-50);
+  --color-ink-muted: var(--color-neutral-400);
+  --color-line: var(--color-neutral-800);
+  --color-accent: var(--color-accent-400);
+  --color-accent-hover: var(--color-accent-500);
+  --color-accent-contrast: var(--color-neutral-950);
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-accent-contrast);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* CSS Grid page shell with named areas, per Phase 2's layout requirement. Logical
+   properties throughout so this isn't silently wrong in a right-to-left context. */
+.app-shell {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas: 'header' 'main' 'footer';
+  min-block-size: 100dvh;
+}
+.app-shell > header {
+  grid-area: header;
+}
+.app-shell > main {
+  grid-area: main;
+}
+.app-shell > footer {
+  grid-area: footer;
+}
+
+/* Container queries: intentionally not used yet. Nothing in the current component set
+   needs to adapt to its slot rather than the viewport - the mobile nav is genuinely
+   viewport-driven (`md:hidden`), not slot-driven. Add a container query when a component
+   actually appears in more than one layout context (a candidate: the project/tool cards
+   later phases add). */
+
+/* Motion: small and purposeful, fully disabled (not just shortened) under
+   prefers-reduced-motion, per Phase 2. No parallax, no animated backgrounds, no
+   mouse-follow effects anywhere in this file. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Standards-track cross-document view transitions. This covers full/hard navigations (and
+   will cover Next.js's client-side soft navigations too, automatically, if that ever lands
+   in a stable React release) - it does NOT animate today's client-side <Link> transitions,
+   which would require React's still-experimental ViewTransition API (canary-only as of
+   React 19.2). Shipping that would mean pinning this project to an unstable React channel
+   for a subtle effect, which isn't a trade worth making here. */
+@view-transition {
+  navigation: auto;
+}
+
+.scroll-progress {
+  position: fixed;
+  inset-block-start: 0;
+  inset-inline: 0;
+  block-size: 3px;
+  background: var(--color-accent);
+  transform-origin: left;
+  transform: scaleX(0);
+  z-index: 50;
+}
+@supports (animation-timeline: scroll()) {
+  .scroll-progress {
+    animation: scroll-progress-fill auto linear;
+    animation-timeline: scroll(root);
+  }
+}
+@keyframes scroll-progress-fill {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* Staggered reveal, first paint only - it's tied to initial mount, so it doesn't replay on
+   interaction (e.g. opening the mobile menu). Disabled entirely under reduced-motion via the
+   blanket rule above. */
+.reveal {
+  animation: reveal-in 0.5s ease-out both;
+}
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
