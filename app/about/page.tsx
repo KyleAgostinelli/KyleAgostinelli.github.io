@@ -9,14 +9,28 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <div className="flex flex-col gap-14">
+      <div>
+        <h1 className="reveal text-balance font-heading text-3xl font-semibold text-ink">About</h1>
+        <p className="mt-4 max-w-(--measure) text-pretty text-ink">
+          A support rep resolves the ticket in front of them. A support engineer works one level
+          down: isolating the bug, securing the infrastructure behind it, understanding the system
+          well enough to explain why it broke and how to keep it from breaking the same way twice.
+          I&apos;ve spent my career doing the first job while building toward the second.
+        </p>
+        <p className="mt-4 max-w-(--measure) text-pretty text-ink">
+          Most support orgs build strong, efficient teams, and then leave real capability on the
+          table by not giving individual agents room to go beyond the ticket in front of them.
+        </p>
+      </div>
+
       <section>
-        <h1 className="reveal text-balance font-heading text-3xl font-semibold text-ink">Skills</h1>
+        <h2 className="text-balance font-heading text-2xl font-semibold text-ink">Skills</h2>
         <div className="mt-6 flex flex-col gap-6">
           {skills.groups.map((group) => (
             <div key={group.label}>
-              <h2 className="text-sm font-semibold uppercase tracking-wide text-ink-muted">
+              <h3 className="text-sm font-semibold uppercase tracking-wide text-ink-muted">
                 {group.label}
-              </h2>
+              </h3>
               <ul className="mt-2 flex flex-wrap gap-2">
                 {group.skills.map((skill) => (
                   <li
@@ -35,7 +49,7 @@ export default function AboutPage() {
       <section aria-labelledby="outcomes-heading">
         <h2
           id="outcomes-heading"
-          className="text-balance font-heading text-3xl font-semibold text-ink"
+          className="text-balance font-heading text-2xl font-semibold text-ink"
         >
           Outcomes
         </h2>
@@ -51,21 +65,25 @@ export default function AboutPage() {
       <section aria-labelledby="experience-heading">
         <h2
           id="experience-heading"
-          className="text-balance font-heading text-3xl font-semibold text-ink"
+          className="text-balance font-heading text-2xl font-semibold text-ink"
         >
           Experience
         </h2>
-        <div className="mt-6 flex flex-col gap-4">
+        <div className="mt-6 flex flex-col gap-5">
           {experience.timeline.map((item) => (
-            <div
-              key={`${item.company}-${item.period}`}
-              className="flex flex-col gap-1 border-b border-line pb-4 sm:flex-row sm:items-baseline sm:justify-between"
-            >
-              <div>
-                <h3 className="font-semibold text-ink">{item.role}</h3>
-                <p className="text-ink-muted">{item.company}</p>
+            <div key={`${item.company}-${item.period}`} className="border-b border-line pb-5">
+              <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
+                <div>
+                  <h3 className="font-semibold text-ink">{item.role}</h3>
+                  <p className="text-ink-muted">{item.company}</p>
+                </div>
+                <p className="text-sm text-ink-muted">{item.period}</p>
               </div>
-              <p className="text-sm text-ink-muted">{item.period}</p>
+              {item.detail ? (
+                <p className="mt-3 max-w-(--measure) text-pretty text-sm text-ink-muted">
+                  {item.detail}
+                </p>
+              ) : null}
             </div>
           ))}
         </div>
@@ -74,7 +92,7 @@ export default function AboutPage() {
       <section aria-labelledby="education-heading">
         <h2
           id="education-heading"
-          className="text-balance font-heading text-3xl font-semibold text-ink"
+          className="text-balance font-heading text-2xl font-semibold text-ink"
         >
           Education
         </h2>

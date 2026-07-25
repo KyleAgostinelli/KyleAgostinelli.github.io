@@ -5,6 +5,7 @@ const timelineEntrySchema = z.object({
   role: nonEmptyString,
   company: nonEmptyString,
   period: nonEmptyString,
+  detail: z.string().optional(),
 })
 export type TimelineEntry = z.infer<typeof timelineEntrySchema>
 
@@ -41,6 +42,8 @@ export const experience: Experience = experienceSchema.parse({
       role: 'IT Administrator',
       company: 'Calculated Fire Protection',
       period: 'Aug 2018 - Aug 2019',
+      detail:
+        "A hard drive corrupted right before a sprinkler job was ready to go out, taking the completed project files with it: $20K+ in technical drawings, a licensed engineer's sign-off on them that pushed the package's value past $100K, and $50K+ in supporting calculations. I found an open-source data recovery tool, worked through a guide for pulling files off a corrupted partition, and isolated the drawing PDFs out of what I recovered.",
     },
   ],
   achievements: [
