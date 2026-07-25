@@ -1,3 +1,4 @@
+import { Code2 } from 'lucide-react'
 import type { Metadata } from 'next'
 import { supportCase } from '@/content/cases'
 import { projects } from '@/content/projects'
@@ -16,10 +17,10 @@ export default function WorkPage() {
   return (
     <div className="flex flex-col gap-14">
       <section>
-        <h1 className="text-3xl font-semibold">Projects</h1>
+        <h1 className="text-3xl font-semibold">Project</h1>
         <p className="mt-2 max-w-2xl text-neutral-600 dark:text-neutral-400">
-          Two protocol-design exercises. Both are concepts and architecture work, not shipped
-          products.
+          The clearest current example of how I work with unfamiliar code, typed systems, and real
+          infrastructure.
         </p>
 
         <div className="mt-8 flex flex-col gap-10">
@@ -41,6 +42,27 @@ export default function WorkPage() {
                   <li key={detail}>{detail}</li>
                 ))}
               </ul>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {project.signals.map((signal) => (
+                  <span
+                    key={signal}
+                    className="rounded-full border border-neutral-300 px-3 py-1 text-xs text-neutral-700 dark:border-neutral-700 dark:text-neutral-300"
+                  >
+                    {signal}
+                  </span>
+                ))}
+              </div>
+              {project.repoUrl ? (
+                <a
+                  href={project.repoUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-5 inline-flex items-center gap-2 text-sm font-medium underline underline-offset-4"
+                >
+                  <Code2 size={15} aria-hidden="true" />
+                  View source
+                </a>
+              ) : null}
             </article>
           ))}
         </div>

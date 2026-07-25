@@ -1,5 +1,6 @@
 import { z } from 'zod'
-import { nonEmptyString } from './schema'
+import { profile } from './profile'
+import { nonEmptyString, urlString } from './schema'
 
 const projectSchema = z.object({
   name: nonEmptyString,
@@ -8,6 +9,7 @@ const projectSchema = z.object({
   supportAngle: nonEmptyString,
   details: z.array(nonEmptyString).min(1),
   signals: z.array(nonEmptyString).min(1),
+  repoUrl: urlString.optional(),
 })
 export type Project = z.infer<typeof projectSchema>
 
@@ -16,31 +18,19 @@ export const projects: Project[] = z
   .min(1)
   .parse([
     {
-      name: 'DxId / Layer0',
-      stage: 'Architecture concept, early build',
+      name: 'This portfolio site',
+      stage: 'In active development',
       summary:
-        'An identity-aware cross-chain interoperability concept: how identity context and trust follow a user or asset across chains rather than resetting at every boundary.',
+        'A from-scratch rebuild of this site: Next.js 15 App Router and TypeScript strict mode, replacing a static React SPA with a real server surface.',
       supportAngle:
-        'Useful in interviews as a systems-thinking example: identity context, integration assumptions, and failure boundaries between systems that do not trust each other by default.',
+        'The most current evidence of how I actually work: migrating an existing codebase, validating data at every trust boundary, and shipping something a technical reviewer can clone and run themselves rather than take my word for.',
       details: [
-        'Focuses on cross-chain identity context and trust-aware routing.',
-        'Designed to support modular systems that can integrate with future app chains.',
-        'A protocol-design exercise, not a shipped product.',
+        "A Zod-validated content layer - a typo in the site's own data fails the build, not production.",
+        'A contact form built as a real server action: typed field-level validation, no data loss on a failed submission, and it still works with JavaScript disabled.',
+        'A custom color system verified against WCAG AA contrast programmatically, not eyeballed.',
+        'Typecheck, lint, format, and a unit test suite all run in CI on every change.',
       ],
-      signals: ['Identity context', 'Interoperability', 'Failure-boundary thinking'],
-    },
-    {
-      name: 'Longyield L1',
-      stage: 'Protocol design',
-      summary:
-        'An L1 design exploring long-horizon staking and validator economics, aimed at predictable incentives over short-term yield.',
-      supportAngle:
-        'Shows comfort with technical tradeoffs, reliability framing, and explaining incentive design without losing a non-technical reader.',
-      details: [
-        'Explores staking and yield mechanics for long-term participant incentives.',
-        'Emphasizes predictable validator economics over short-term throughput.',
-        'A research-stage design, not a deployed network.',
-      ],
-      signals: ['Protocol design', 'Reliability framing', 'Technical communication'],
+      signals: ['TypeScript', 'API and server actions', 'Automated testing', 'CI/CD'],
+      repoUrl: `${profile.github}/kyleagostinelli.github.io`,
     },
   ] satisfies z.input<typeof projectSchema>[])
