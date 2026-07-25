@@ -31,6 +31,6 @@ export const projects: Project[] = z
         'Typecheck, lint, format, and a unit test suite all run in CI on every change.',
       ],
       signals: ['TypeScript', 'API and server actions', 'Automated testing', 'CI/CD'],
-      repoUrl: `${profile.github}/kyleagostinelli.github.io`,
+      repoUrl: `${profile.github}/KyleAgostinelli.github.io`,
     },
   ] satisfies z.input<typeof projectSchema>[])
