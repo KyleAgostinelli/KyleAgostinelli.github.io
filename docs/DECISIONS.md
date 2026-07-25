@@ -86,7 +86,7 @@ than "reasonably fast."
 **Consequences.** Every Phase 4 tool ships with tests as a condition of being done, not as
 follow-up work — this is called out explicitly in that phase. CI takes longer to write and to
 run than the current single scaffold test, but a reviewer running `npm test` sees assertions
-about *this* site's behavior, and a red build actually means something broke.
+about _this_ site's behavior, and a red build actually means something broke.
 
 ---
 

@@ -1,16 +1,10 @@
 # Kyle Agostinelli Portfolio
 
-React + Vite + Tailwind portfolio site for `KyleAgostinelli.github.io`.
+Next.js 15 (App Router) + TypeScript (strict) + Tailwind v4 portfolio site, deployed to Vercel.
 
-## Contact form
-
-The contact page uses a Formspree endpoint when configured. Copy `.env.example` to `.env.local` and set:
-
-```bash
-VITE_FORMSPREE_ENDPOINT=https://formspree.io/f/YOUR_FORM_ID
-```
-
-If the endpoint is not configured, the form falls back to a prefilled `mailto:` message.
+This is mid-migration from a previous Vite + React SPA. See `docs/ARCHITECTURE.md`,
+`docs/DECISIONS.md`, and `docs/MIGRATION.md` for the rebuild plan. A full reviewer-facing
+README rewrite is a later step in that plan.
 
 ## Local development
 
@@ -19,19 +13,26 @@ npm install
 npm run dev
 ```
 
-## Production build
+## Checks
 
 ```bash
+npm run typecheck
+npm run lint
 npm run build
-npm run preview
 ```
 
-## GitHub Pages deployment
+## Contact form
 
-The workflow at `.github/workflows/deploy.yml` builds and deploys on every push to `main`.
+The contact page posts through a server action (`app/contact/actions.ts`). If
+`FORMSPREE_ENDPOINT` is set, it forwards the submission there; otherwise it redirects to a
+prefilled `mailto:` link. Copy `.env.example` to `.env.local` and set:
 
-Required repository settings:
+```bash
+FORMSPREE_ENDPOINT=https://formspree.io/f/YOUR_FORM_ID
+```
 
-1. In GitHub, open `Settings -> Pages`.
-2. Set `Source` to `GitHub Actions`.
-3. Push to `main` and wait for the `Deploy Portfolio` workflow to finish.
+## Deployment
+
+The production target is Vercel. The previous GitHub Pages workflow
+(`.github/workflows/deploy.yml.disabled`) is kept on disk, disabled, until the Vercel domain
+is verified live.

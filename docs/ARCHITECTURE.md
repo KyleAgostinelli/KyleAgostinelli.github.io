@@ -11,7 +11,7 @@ Commits and small atomic commits, which need somewhere to land. Before Phase 1 w
 code:
 
 1. `git init`, add a baseline commit of the current Vite app as-is (`chore: snapshot
-   pre-migration Vite app`) so the migration is a reviewable diff rather than a single
+pre-migration Vite app`) so the migration is a reviewable diff rather than a single
    opaque drop.
 2. Create the GitHub remote (or confirm it already exists for
    `kyleagostinelli.github.io`) and push the baseline before starting the rewrite.
@@ -115,17 +115,18 @@ tests/
 Default is server. The table below is the complete list of components that need
 `"use client"`, and why each one earns it. Anything not listed stays a server component.
 
-| Component | Reason for the client boundary |
-|---|---|
-| `MobileNav.tsx` | Needs open/close state, a focus trap, and an `Escape` key handler — genuine browser-event subscriptions, not derivable on the server. |
-| `JwtDecoder.tsx` | Phase 4 requires the token never be sent to the server at all; decoding must run in the browser or the constraint is meaningless. |
-| `StatusExplorer.tsx` | The tool's value is showing the *actual* response headers the browser received; that requires a real `fetch()` call from client JS, not a server-rendered proxy of it. A plain `<a href="/api/http/404">` link remains the no-JS fallback (opens the raw JSON response directly). |
-| `HarFilterControls.tsx` | Sort/filter of an already-rendered result set is pure client-side UI state with no server round trip to justify — but it sits *beside* the server-rendered `HarResultView`, which does the actual parsing. |
-| `ThemeToggle` interactive bits (if any survive review) | Only if the cookie-based server toggle turns out to need a same-frame visual flip; default plan below avoids this entirely. |
-| Scroll progress indicator, first-paint stagger reveal | Small client leaves per Phase 2; both are inert without `prefers-reduced-motion` checked client-side, and both fully no-op under that media query. |
-| `useFormStatus`-based submit buttons (contact form, escalation form) | The pending-spinner state is the only genuinely client-side sliver; the surrounding form is a server action and works with JS disabled. |
+| Component                                                            | Reason for the client boundary                                                                                                                                                                                                                                                    |
+| -------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `MobileNav.tsx`                                                      | Needs open/close state, a focus trap, and an `Escape` key handler — genuine browser-event subscriptions, not derivable on the server.                                                                                                                                             |
+| `JwtDecoder.tsx`                                                     | Phase 4 requires the token never be sent to the server at all; decoding must run in the browser or the constraint is meaningless.                                                                                                                                                 |
+| `StatusExplorer.tsx`                                                 | The tool's value is showing the _actual_ response headers the browser received; that requires a real `fetch()` call from client JS, not a server-rendered proxy of it. A plain `<a href="/api/http/404">` link remains the no-JS fallback (opens the raw JSON response directly). |
+| `HarFilterControls.tsx`                                              | Sort/filter of an already-rendered result set is pure client-side UI state with no server round trip to justify — but it sits _beside_ the server-rendered `HarResultView`, which does the actual parsing.                                                                        |
+| `ThemeToggle` interactive bits (if any survive review)               | Only if the cookie-based server toggle turns out to need a same-frame visual flip; default plan below avoids this entirely.                                                                                                                                                       |
+| Scroll progress indicator, first-paint stagger reveal                | Small client leaves per Phase 2; both are inert without `prefers-reduced-motion` checked client-side, and both fully no-op under that media query.                                                                                                                                |
+| `useFormStatus`-based submit buttons (contact form, escalation form) | The pending-spinner state is the only genuinely client-side sliver; the surrounding form is a server action and works with JS disabled.                                                                                                                                           |
 
 Notably **not** client components, despite being interactive-looking in the current site:
+
 - `ThemeToggle` — implemented as a `<form action={toggleTheme}>` server action that flips a
   cookie and the layout re-renders server-side. No flash, no client JS required.
 - The contact and escalation forms themselves — server actions with real `<form>` elements;
@@ -139,9 +140,9 @@ Notably **not** client components, despite being interactive-looking in the curr
 constant, e.g.:
 
 ```ts
-export const profileSchema = z.object({ /* … */ })
+export const profileSchema = z.object({/* … */})
 export type Profile = z.infer<typeof profileSchema>
-export const profile: Profile = profileSchema.parse({ /* literal data */ })
+export const profile: Profile = profileSchema.parse({/* literal data */})
 ```
 
 Parsing happens at module scope, so a typo in the literal data throws when the module is
@@ -158,7 +159,7 @@ ships to the client.
 
 **Tool content**: the explanatory text each diagnostic tool shows ("what this status code
 means," "what a support engineer checks first," the DNS step descriptions) lives in
-`src/content/tools/*.ts` as typed data, imported by *both* the route handler (so the API
+`src/content/tools/*.ts` as typed data, imported by _both_ the route handler (so the API
 response includes the explanation) and the page component (so the static page can render the
 same text without a network round trip). One source of truth, two consumers.
 
@@ -186,6 +187,6 @@ justifies it, not implemented speculatively now.
 - **Component prop types**: defined in the component's own file, not hoisted to a shared
   `types.ts` unless genuinely reused by more than one component.
 - **Discriminated unions for tool results** (e.g., a HAR finding that's one of `auth-missing
-  | cors-preflight-failure | redirect-chain | slow-waterfall | mixed-content`): live next to
+| cors-preflight-failure | redirect-chain | slow-waterfall | mixed-content`): live next to
   the parser that produces them in `src/lib/har/parse.ts`, re-exported for the UI components
   that switch on them.
