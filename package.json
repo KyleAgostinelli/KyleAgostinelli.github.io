@@ -13,7 +13,8 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "test": "vitest run"
   },
   "dependencies": {
     "lucide-react": "^1.26.0",
@@ -36,6 +37,7 @@
     "prettier": "^3.9.6",
     "tailwindcss": "^4.3.3",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.65.0"
+    "typescript-eslint": "^8.65.0",
+    "vitest": "^4.1.10"
   }
 }
