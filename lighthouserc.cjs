@@ -11,7 +11,10 @@ module.exports = {
       settings: {
         preset: 'perf',
         onlyCategories: ['performance', 'accessibility', 'best-practices', 'seo'],
-        chromeFlags: ['--no-sandbox', '--headless=new'],
+        // --no-sandbox: required to launch Chrome at all inside most CI runners/containers.
+        // --disable-dev-shm-usage: CI containers often mount a tiny /dev/shm; without this,
+        // Chrome's shared-memory usage during rendering can crash the browser outright.
+        chromeFlags: ['--no-sandbox', '--headless=new', '--disable-dev-shm-usage', '--disable-gpu'],
       },
       url: ['http://localhost:3000/', 'http://localhost:3000/work', 'http://localhost:3000/tools'],
     },

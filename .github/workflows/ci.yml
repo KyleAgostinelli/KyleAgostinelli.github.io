@@ -66,7 +66,12 @@ jobs:
 
       - name: Resolve Chrome path
         id: chrome-path
-        run: echo "path=$(node -e "console.log(require('playwright-core').chromium.executablePath())")" >> "$GITHUB_OUTPUT"
+        run: |
+          CHROME_BIN="$(node -e "console.log(require('playwright-core').chromium.executablePath())")"
+          echo "path=$CHROME_BIN" >> "$GITHUB_OUTPUT"
+          echo "Resolved Chrome path: $CHROME_BIN"
+          ls -la "$CHROME_BIN"
+          "$CHROME_BIN" --version --no-sandbox --headless=new
 
       - name: Lighthouse CI
         run: npx lhci autorun --config=./lighthouserc.cjs
