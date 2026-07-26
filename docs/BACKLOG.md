@@ -49,7 +49,7 @@ range, this resolves itself with a routine `npm update` and this entry gets dele
 
 ## npm audit: 8 more findings added by `@lhci/cli` (since Phase 5)
 
-Installing `@lhci/cli` for Lighthouse CI (`lighthouserc.json`,
+Installing `@lhci/cli` for Lighthouse CI (`lighthouserc.cjs`,
 `.github/workflows/ci.yml`) pulled in `chrome-launcher`, `inquirer`, `tmp`, and `uuid` as
 transitive dependencies, bringing `npm audit` from 12 findings to 20:
 

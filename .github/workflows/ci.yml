@@ -64,10 +64,17 @@ jobs:
           path: playwright-report/
           retention-days: 7
 
+      - name: Resolve Chrome path
+        id: chrome-path
+        run: echo "path=$(node -e "console.log(require('playwright-core').chromium.executablePath())")" >> "$GITHUB_OUTPUT"
+
       - name: Lighthouse CI
-        run: npx lhci autorun --config=./lighthouserc.json
+        run: npx lhci autorun --config=./lighthouserc.cjs
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # chrome-launcher's auto-detection isn't reliable across runner images - point it at
+          # the Chromium already installed above for Playwright instead of hoping it finds one.
+          CHROME_PATH: ${{ steps.chrome-path.outputs.path }}
 
       - name: Upload Lighthouse report
         if: always()

@@ -26,7 +26,7 @@ export default defineConfig([
         // Only .js/.mjs config files need this — next.config.ts is already picked up by
         // tsconfig's `**/*.ts` include, so listing it here would conflict with that.
         projectService: {
-          allowDefaultProject: ['*.config.{js,mjs}', 'scripts/*.js'],
+          allowDefaultProject: ['*.config.{js,mjs}', 'scripts/*.js', 'lighthouserc.cjs'],
         },
         tsconfigRootDir: __dirname,
       },
