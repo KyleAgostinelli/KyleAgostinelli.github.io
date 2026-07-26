@@ -1,8 +1,7 @@
 # Architecture Decision Records
 
-Five short ADRs covering the Phase 0 decisions, plus one added during Phase 6 when real
-Lighthouse data disagreed with the brief's original budget. Format: Context / Decision /
-Consequences.
+Five short ADRs covering the Phase 0 decisions, plus two added during Phase 6 once real
+Lighthouse data landed in CI. Format: Context / Decision / Consequences.
 
 ---
 
@@ -149,8 +148,7 @@ architecture rather than to a bug:
 is already 1.0 — this still catches a real regression anywhere else in the category) and
 `largest-contentful-paint` to `2600` (measured value plus headroom), each with the reasoning
 above written inline in `lighthouserc.cjs`. Left every other budget (Performance ≥ 98,
-Accessibility/Best Practices = 100, CLS < 0.01) at the brief's original number, since those are
-genuinely met.
+Accessibility/Best Practices = 100, CLS < 0.01) at the brief's original number.
 
 **Consequences.** The two adjusted numbers are honest reflections of measured reality, not
 targets weakened to make CI pass — the alternative was a permanently-red Lighthouse gate that
@@ -158,3 +156,46 @@ stops meaning anything the first time it's ignored. If either metric regresses f
 still catches it. Revisit if a future Next.js release changes how the App Router streams
 metadata (which would fix the SEO gap directly) or if the site's JS footprint is deliberately
 reduced enough to move LCP under a tighter number.
+
+---
+
+## ADR 7 — CLS budget: two real regressions found and fixed, not loosened
+
+**Context.** Unlike SEO and LCP in ADR 6, the first real GitHub Actions Lighthouse run (once
+Chrome was actually launching — see the CI commit history around `74e75c5`) showed CLS
+failing the 0.01 budget on every tested route: 0.018 on `/`, 0.029 on `/work`, 0.018 on
+`/tools`. Both root causes were genuinely fixable, so the budget stayed at the brief's
+original number rather than being adjusted like ADR 6's two.
+
+- **The `.reveal` animation.** `globals.css` animated both `opacity` and
+  `transform: translateY(4px → 0)` on first paint. CSS `transform` doesn't trigger layout
+  reflow, but Cumulative Layout Shift tracks an element's _rendered_ position between frames
+  regardless of what moved it — an animated translate still counts as a shift even though it
+  never touches layout. Confirmed by removing just the `transform` half locally; not
+  reproducible as the sole cause on its own hardware-fast dev machine, but consistent with
+  web.dev's own documented CLS/transform caveat.
+- **Font loading.** Reproduced directly: Lighthouse under a much heavier CPU throttle
+  (`--throttling.cpuSlowdownMultiplier=20`, well past the default mobile 4x) than this dev
+  machine needed to show any shift at all, `/work` showed a real 0.0043 layout shift on the
+  footer. Blocking all `.woff2` requests outright (`--blocked-url-patterns="*.woff2"`) dropped
+  that to exactly 0 — proof the shift came from the font swap, not something else on the
+  page. `next/font`'s automatic fallback-metric matching (`adjustFontFallback`) reduces this
+  kind of shift but doesn't guarantee zero for every font pairing; Source Serif 4 is a
+  variable font with an optical-size axis, which metric-matching approximates rather than
+  matches exactly.
+
+**Decision.** Drop `transform` from `.reveal`, keeping only the `opacity` fade — same
+first-paint polish, nothing left that moves. Switch both fonts in `src/lib/fonts.ts` from
+`display: 'swap'` to `display: 'optional'`: the browser gets a very short window to use the
+custom font if already cached, and commits to the metric-matched fallback for that page view
+otherwise — no later swap, so nothing to shift. Verified locally under the same
+20x-throttle/blocked-font-request conditions that reproduced the original shift: CLS at 0 on
+all three routes after both changes.
+
+**Consequences.** `display: 'optional'` means a visitor with a slow connection may see the
+fallback font for the entire page view rather than a brief flash of the wrong font followed by
+the real one — an intentional trade (stability over eventually-correct typography) for a site
+where the CLS budget is a hard CI gate. If a future redesign swaps in a font where fallback
+metrics happen to match closer, `swap` could be reconsidered, but only if re-verified the same
+way this was found — by measuring under real throttling, not by assuming `next/font` makes CLS
+a solved problem by default.
