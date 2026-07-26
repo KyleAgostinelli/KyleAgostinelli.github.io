@@ -187,17 +187,20 @@
 
 /* Staggered reveal, first paint only - it's tied to initial mount, so it doesn't replay on
    interaction (e.g. opening the mobile menu). Disabled entirely under reduced-motion via the
-   blanket rule above. */
+   blanket rule above.
+   Opacity only, deliberately - an earlier version also animated `transform: translateY()`,
+   which measurably regressed Cumulative Layout Shift in CI (0.018-0.029 against a 0.01
+   budget) even though `transform` doesn't trigger layout reflow. CLS tracks the *rendered*
+   position of an element between frames, not just reflow, so an animated translate still
+   counts as a shift. Opacity changes don't move anything, so they don't. */
 .reveal {
   animation: reveal-in 0.5s ease-out both;
 }
 @keyframes reveal-in {
   from {
     opacity: 0;
-    transform: translateY(4px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }
