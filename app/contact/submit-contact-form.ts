@@ -2,6 +2,9 @@ import { z } from 'zod'
 import {
   buildMailtoHref,
   contactFormSchema,
+  HONEYPOT_FIELD_NAME,
+  MIN_SUBMIT_MS,
+  RENDERED_AT_FIELD_NAME,
   type ContactActionState,
   type ContactFieldErrors,
   type ContactFormValues,
@@ -12,6 +15,24 @@ const FORMSPREE_TIMEOUT_MS = 8000
 function readField(formData: FormData, name: string): string {
   const value = formData.get(name)
   return typeof value === 'string' ? value : ''
+}
+
+// A non-empty honeypot, or a missing/tampered/too-fast timestamp, marks the submission as
+// automated. Real form-filling (reading the fields, typing an actual message) takes longer
+// than MIN_SUBMIT_MS; a missing renderedAt only happens if something POSTs to this action
+// directly instead of going through the rendered form at all.
+function looksAutomated(formData: FormData): boolean {
+  if (readField(formData, HONEYPOT_FIELD_NAME).length > 0) return true
+
+  // Number('') is 0, not NaN - checked separately so a missing field reads as "invalid",
+  // not as a (very old) timestamp that happens to clear the MIN_SUBMIT_MS bar.
+  const renderedAtRaw = readField(formData, RENDERED_AT_FIELD_NAME)
+  if (renderedAtRaw.length === 0) return true
+
+  const renderedAt = Number(renderedAtRaw)
+  if (!Number.isFinite(renderedAt)) return true
+
+  return Date.now() - renderedAt < MIN_SUBMIT_MS
 }
 
 function readValues(formData: FormData): ContactFormValues {
@@ -33,6 +54,12 @@ export async function submitContactForm(
   formData: FormData,
   formspreeEndpoint: string | undefined,
 ): Promise<ContactActionState> {
+  // Reports success without sending anything - telling a bot it failed just invites a retry
+  // with a tweaked payload, and a real visitor never trips the honeypot or submits this fast.
+  if (looksAutomated(formData)) {
+    return { status: 'success' }
+  }
+
   const values = readValues(formData)
 
   const parsed = contactFormSchema.safeParse({

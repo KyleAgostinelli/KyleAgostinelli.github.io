@@ -1,15 +1,25 @@
 import { ArrowRight } from 'lucide-react'
-import type { Metadata } from 'next'
 import Link from 'next/link'
+import { BreadcrumbJsonLd } from '@/components/JsonLd'
 import { supportCase } from '@/content/cases'
+import { buildPageMetadata } from '@/lib/metadata'
 
-export const metadata: Metadata = {
+export const metadata = buildPageMetadata({
   title: 'Work',
-}
+  description:
+    "A real support incident from Kyle Agostinelli's time at Samsara, written up the way an engineer would want to receive it.",
+  path: '/work',
+})
 
 export default function WorkPage() {
   return (
     <div className="flex flex-col gap-6">
+      <BreadcrumbJsonLd
+        crumbs={[
+          { name: 'Home', path: '/' },
+          { name: 'Work', path: '/work' },
+        ]}
+      />
       <div>
         <h1 className="reveal text-balance font-heading text-3xl font-semibold text-ink">Work</h1>
         <p className="mt-2 max-w-(--measure) text-pretty text-ink-muted">

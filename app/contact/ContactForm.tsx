@@ -7,14 +7,16 @@
 // either way, no client-side state required for the first round trip.
 
 import { Mail } from 'lucide-react'
-import { useActionState } from 'react'
+import { useActionState, useState } from 'react'
 import { profile } from '@/content/profile'
 import { submitContact } from './actions'
 import {
   emptyContactValues,
+  HONEYPOT_FIELD_NAME,
   initialContactState,
   mailtoHrefSchema,
   opportunityTypes,
+  RENDERED_AT_FIELD_NAME,
   type ContactFieldErrors,
   type ContactFormValues,
 } from './schema'
@@ -56,6 +58,10 @@ function FallbackBanner({ mailtoHref }: { mailtoHref: string }) {
 
 export function ContactForm() {
   const [state, formAction, isPending] = useActionState(submitContact, initialContactState)
+  // Lazy initializer runs during the initial render whether or not client JS ever loads
+  // (this component is still server-rendered first), so the timestamp lands in the static
+  // HTML's hidden input either way - no useEffect needed to make the no-JS path work.
+  const [renderedAt] = useState(() => Date.now())
 
   if (state.status === 'success') {
     return (
@@ -83,6 +89,22 @@ export function ContactForm() {
       ) : null}
 
       <form action={formAction} className="grid max-w-xl gap-5" noValidate>
+        <input type="hidden" name={RENDERED_AT_FIELD_NAME} defaultValue={renderedAt} />
+        {/* Honeypot: invisible and unreachable by keyboard for a real visitor. Any bot that
+            fills every field it finds trips this; readValues() in submit-contact-form.ts
+            treats a non-empty value as automated. */}
+        <div aria-hidden="true" style={{ position: 'absolute', left: '-9999px' }}>
+          <label>
+            Leave this field blank
+            <input
+              type="text"
+              name={HONEYPOT_FIELD_NAME}
+              tabIndex={-1}
+              autoComplete="off"
+              defaultValue=""
+            />
+          </label>
+        </div>
         <label className="flex flex-col gap-1 text-sm">
           Name
           <input

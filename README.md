@@ -109,6 +109,12 @@ A few things I'd point a reviewer at first:
    `<form action={toggleTheme}>` that flips a cookie and re-renders server-side, so there's no
    flash-of-wrong-theme to fix on mount because there was never a client-side guess to correct
    (`src/components/layout/ThemeToggle.tsx`, `src/components/layout/theme-actions.ts`).
+5. **A real nonce-based CSP with no `unsafe-inline` for scripts** (`middleware.ts`), verified by
+   actually loading the site in a headless browser and checking for zero console violations,
+   not just by writing the header and assuming it works. That check caught a real
+   cross-engine bug: `upgrade-insecure-requests` breaks WebKit specifically on plain-HTTP
+   `localhost`, since WebKit — unlike Chromium and Firefox — doesn't exempt `localhost` from
+   the forced HTTPS upgrade. Dropped the directive; HSTS already covers production.
 
 ## Architecture
 
@@ -150,10 +156,24 @@ choice above.
 
 Posts through a server action (`app/contact/actions.ts`). If `FORMSPREE_ENDPOINT` is set, it
 forwards there; otherwise it redirects to a prefilled `mailto:` link, and says so in the UI
-rather than silently failing.
+rather than silently failing. A honeypot field and a minimum time-to-submit check
+(`app/contact/schema.ts`, `app/contact/submit-contact-form.ts`) report fake success to
+anything that looks automated, without sending real spam through to Formspree or my inbox.
+
+## SEO and metadata
+
+Every route has real per-page metadata (title, description, canonical URL, OpenGraph, Twitter
+card) built by `src/lib/metadata.ts`, not inherited by accident from the root layout's
+defaults. OG images are generated per-route via `next/og` (`app/opengraph-image.tsx`,
+`app/work/[slug]/opengraph-image.tsx`), not static PNGs. JSON-LD structured data
+(`src/components/JsonLd.tsx`) covers `Person` on the homepage, `BreadcrumbList` on every
+nested route, and `TechArticle` on the case study and notes. `sitemap.ts`, `robots.ts`,
+`manifest.ts`, and a generated favicon set (`app/icon.tsx`, `app/apple-icon.tsx`) round it out.
 
 ## Security
 
-See [SECURITY.md](SECURITY.md) for the reporting process and the documented, accepted
-limitations (rate limiting is per-instance in-memory; the JWT decoder has no server-side
-attack surface by design).
+A strict Content-Security-Policy with a per-request nonce (`middleware.ts`, no `unsafe-inline`
+for scripts), plus HSTS, `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, and
+`Permissions-Policy` (`next.config.ts`). See [SECURITY.md](SECURITY.md) for the reporting
+process and the documented, accepted limitations (rate limiting is per-instance in-memory; the
+JWT decoder has no server-side attack surface by design).

@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { BreadcrumbJsonLd, TechArticleJsonLd } from '@/components/JsonLd'
 import { cases } from '@/content/cases'
+import { buildPageMetadata } from '@/lib/metadata'
 
 export function generateStaticParams(): { slug: string }[] {
   return cases.map((c) => ({ slug: c.slug }))
@@ -13,7 +15,12 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params
   const supportCase = cases.find((c) => c.slug === slug)
-  return { title: supportCase?.title ?? 'Case study' }
+  if (!supportCase) return { title: 'Case study' }
+  return buildPageMetadata({
+    title: supportCase.title,
+    description: supportCase.summary,
+    path: `/work/${supportCase.slug}`,
+  })
 }
 
 export default async function CaseStudyPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -26,6 +33,18 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
 
   return (
     <div className="flex flex-col gap-10">
+      <BreadcrumbJsonLd
+        crumbs={[
+          { name: 'Home', path: '/' },
+          { name: 'Work', path: '/work' },
+          { name: supportCase.title, path: `/work/${supportCase.slug}` },
+        ]}
+      />
+      <TechArticleJsonLd
+        headline={supportCase.title}
+        description={supportCase.summary}
+        path={`/work/${supportCase.slug}`}
+      />
       <div>
         <p className="text-xs uppercase tracking-wide text-ink-muted">{supportCase.role}</p>
         <h1 className="mt-1 text-balance font-heading text-3xl font-semibold text-ink sm:text-4xl">

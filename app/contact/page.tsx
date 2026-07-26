@@ -1,15 +1,25 @@
 import { Mail, MapPin } from 'lucide-react'
-import type { Metadata } from 'next'
+import { BreadcrumbJsonLd } from '@/components/JsonLd'
 import { profile } from '@/content/profile'
+import { buildPageMetadata } from '@/lib/metadata'
 import { ContactForm } from './ContactForm'
 
-export const metadata: Metadata = {
+export const metadata = buildPageMetadata({
   title: 'Contact',
-}
+  description:
+    'Get in touch with Kyle Agostinelli about TSE, Support Specialist II, API Support, or IT Support roles.',
+  path: '/contact',
+})
 
 export default function ContactPage() {
   return (
     <div className="flex flex-col gap-10">
+      <BreadcrumbJsonLd
+        crumbs={[
+          { name: 'Home', path: '/' },
+          { name: 'Contact', path: '/contact' },
+        ]}
+      />
       <div>
         <h1 className="reveal text-balance font-heading text-3xl font-semibold text-ink">
           Contact

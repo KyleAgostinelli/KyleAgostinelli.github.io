@@ -20,7 +20,7 @@ export function SiteHeader() {
           {profile.name}
         </Link>
 
-        <div className="reveal flex items-center gap-5" style={{ animationDelay: '60ms' }}>
+        <div className="reveal flex items-center gap-5 [animation-delay:60ms]">
           <nav aria-label="Primary" className="hidden md:block">
             <ul className="flex items-center gap-7">
               {navItems.map((item) => (

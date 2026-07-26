@@ -1,13 +1,24 @@
-import type { Metadata } from 'next'
+import { BreadcrumbJsonLd } from '@/components/JsonLd'
 import { HarAnalyzer } from '@/components/tools/HarAnalyzer'
+import { buildPageMetadata } from '@/lib/metadata'
 
-export const metadata: Metadata = {
+export const metadata = buildPageMetadata({
   title: 'HAR Analyzer',
-}
+  description:
+    'Paste a HAR export or a request/response pair and surface failed requests, auth header problems, CORS failures, redirect chains, and slow requests - parsed server-side.',
+  path: '/tools/har',
+})
 
 export default function HarToolPage() {
   return (
     <div className="flex flex-col gap-8">
+      <BreadcrumbJsonLd
+        crumbs={[
+          { name: 'Home', path: '/' },
+          { name: 'Tools', path: '/tools' },
+          { name: 'HAR Analyzer', path: '/tools/har' },
+        ]}
+      />
       <div>
         <h1 className="reveal text-balance font-heading text-3xl font-semibold text-ink">
           HAR analyzer

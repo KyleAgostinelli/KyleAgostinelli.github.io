@@ -1,13 +1,24 @@
-import type { Metadata } from 'next'
+import { BreadcrumbJsonLd } from '@/components/JsonLd'
 import { StatusExplorer } from '@/components/tools/StatusExplorer'
+import { buildPageMetadata } from '@/lib/metadata'
 
-export const metadata: Metadata = {
+export const metadata = buildPageMetadata({
   title: 'HTTP Status Explorer',
-}
+  description:
+    'Fire a real request against any HTTP status code and inspect the actual response headers, with an explanation of what each status means and what to check first.',
+  path: '/tools/status',
+})
 
 export default function StatusToolPage() {
   return (
     <div className="flex flex-col gap-8">
+      <BreadcrumbJsonLd
+        crumbs={[
+          { name: 'Home', path: '/' },
+          { name: 'Tools', path: '/tools' },
+          { name: 'HTTP Status Explorer', path: '/tools/status' },
+        ]}
+      />
       <div>
         <h1 className="reveal text-balance font-heading text-3xl font-semibold text-ink">
           HTTP status explorer

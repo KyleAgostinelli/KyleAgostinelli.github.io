@@ -1,11 +1,13 @@
 import { Download, Mail } from 'lucide-react'
 import Link from 'next/link'
+import { PersonJsonLd } from '@/components/JsonLd'
 import { supportCase } from '@/content/cases'
 import { profile } from '@/content/profile'
 
 export default function HomePage() {
   return (
     <div className="flex flex-col gap-14">
+      <PersonJsonLd />
       <section>
         <h1 className="reveal text-balance font-heading text-4xl font-semibold text-ink sm:text-5xl">
           {profile.name}

@@ -2,7 +2,9 @@ import type { Metadata } from 'next'
 import { MDXRemote } from 'next-mdx-remote/rsc'
 import { notFound } from 'next/navigation'
 import rehypePrettyCode from 'rehype-pretty-code'
+import { BreadcrumbJsonLd, TechArticleJsonLd } from '@/components/JsonLd'
 import { getAllNotes, getNoteBySlug } from '@/content/notes'
+import { buildPageMetadata } from '@/lib/metadata'
 
 export function generateStaticParams(): { slug: string }[] {
   return getAllNotes().map((note) => ({ slug: note.slug }))
@@ -15,7 +17,12 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params
   const note = getNoteBySlug(slug)
-  return { title: note?.title ?? 'Note' }
+  if (!note) return { title: 'Note' }
+  return buildPageMetadata({
+    title: note.title,
+    description: note.summary,
+    path: `/notes/${note.slug}`,
+  })
 }
 
 // Shiki highlights at build/request time on the server via this rehype plugin - no
@@ -45,6 +52,19 @@ export default async function NotePage({ params }: { params: Promise<{ slug: str
 
   return (
     <article className="flex flex-col gap-6">
+      <BreadcrumbJsonLd
+        crumbs={[
+          { name: 'Home', path: '/' },
+          { name: 'Notes', path: '/notes' },
+          { name: note.title, path: `/notes/${note.slug}` },
+        ]}
+      />
+      <TechArticleJsonLd
+        headline={note.title}
+        description={note.summary}
+        path={`/notes/${note.slug}`}
+        datePublished={note.date}
+      />
       <div>
         <h1 className="text-balance font-heading text-3xl font-semibold text-ink">{note.title}</h1>
         <p className="mt-2 text-sm text-ink-muted">{note.date}</p>

@@ -73,3 +73,15 @@ temp directory name or contents). None of it ships to a visitor's browser.
 
 **Revisit:** re-run `npm audit` whenever `@lhci/cli` is bumped; a version pinning updated
 `chrome-launcher`/`tmp`/`uuid` resolves this without any change on this project's side.
+
+## Avatar is self-hosted but not displayed anywhere (since Phase 6)
+
+`profile.avatar` now points at a self-hosted file (`public/avatar.png`, downloaded from the
+real GitHub avatar) instead of hotlinking `avatars.githubusercontent.com`, closing the gap
+Phase 6 flagged. It still isn't rendered anywhere in the UI, on purpose: the actual photo is
+a distant, environmental shot (a person in a field), not a headshot, and cropping it into a
+small square avatar produces a low-detail, illegible result - worse than showing nothing.
+
+**Revisit:** if Kyle supplies an actual headshot, add it via `next/image` on the About page
+(explicit dimensions, blur placeholder) at that point, rather than forcing today's source
+photo into a frame it wasn't shot for.

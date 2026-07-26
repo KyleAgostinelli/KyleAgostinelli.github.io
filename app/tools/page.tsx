@@ -1,9 +1,13 @@
-import type { Metadata } from 'next'
 import Link from 'next/link'
+import { BreadcrumbJsonLd } from '@/components/JsonLd'
+import { buildPageMetadata } from '@/lib/metadata'
 
-export const metadata: Metadata = {
+export const metadata = buildPageMetadata({
   title: 'Tools',
-}
+  description:
+    'Real server-side diagnostic tools: an HTTP status explorer, a HAR analyzer, a client-only JWT decoder, an escalation formatter, and a DNS walkthrough.',
+  path: '/tools',
+})
 
 const tools = [
   {
@@ -38,6 +42,12 @@ const tools = [
 export default function ToolsIndexPage() {
   return (
     <div className="flex flex-col gap-8">
+      <BreadcrumbJsonLd
+        crumbs={[
+          { name: 'Home', path: '/' },
+          { name: 'Tools', path: '/tools' },
+        ]}
+      />
       <div>
         <h1 className="reveal text-balance font-heading text-3xl font-semibold text-ink">Tools</h1>
         <p className="mt-2 max-w-(--measure) text-pretty text-ink-muted">

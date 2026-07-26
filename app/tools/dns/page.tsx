@@ -1,13 +1,24 @@
-import type { Metadata } from 'next'
+import { BreadcrumbJsonLd } from '@/components/JsonLd'
 import { dnsSteps } from '@/content/tools/dns-steps'
+import { buildPageMetadata } from '@/lib/metadata'
 
-export const metadata: Metadata = {
+export const metadata = buildPageMetadata({
   title: 'DNS & Connectivity Explainer',
-}
+  description:
+    'A walkthrough of the seven steps between a browser and a page - resolver, root, TLD, authoritative, A/CNAME, TLS, HTTP - and how each one fails differently.',
+  path: '/tools/dns',
+})
 
 export default function DnsToolPage() {
   return (
     <div className="flex flex-col gap-8">
+      <BreadcrumbJsonLd
+        crumbs={[
+          { name: 'Home', path: '/' },
+          { name: 'Tools', path: '/tools' },
+          { name: 'DNS & Connectivity Explainer', path: '/tools/dns' },
+        ]}
+      />
       <div>
         <h1 className="reveal text-balance font-heading text-3xl font-semibold text-ink">
           DNS &amp; connectivity walkthrough

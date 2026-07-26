@@ -1,13 +1,24 @@
-import type { Metadata } from 'next'
+import { BreadcrumbJsonLd } from '@/components/JsonLd'
 import { EscalationForm } from '@/components/tools/EscalationForm'
+import { buildPageMetadata } from '@/lib/metadata'
 
-export const metadata: Metadata = {
+export const metadata = buildPageMetadata({
   title: 'Escalation Formatter',
-}
+  description:
+    "Turn structured incident fields into a real escalation writeup, generated in Kyle Agostinelli's actual escalation format.",
+  path: '/tools/escalation',
+})
 
 export default function EscalationToolPage() {
   return (
     <div className="flex flex-col gap-8">
+      <BreadcrumbJsonLd
+        crumbs={[
+          { name: 'Home', path: '/' },
+          { name: 'Tools', path: '/tools' },
+          { name: 'Escalation Formatter', path: '/tools/escalation' },
+        ]}
+      />
       <div>
         <h1 className="reveal text-balance font-heading text-3xl font-semibold text-ink">
           Escalation formatter

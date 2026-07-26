@@ -4,15 +4,33 @@ import { SiteFooter } from '@/components/layout/SiteFooter'
 import { SiteHeader } from '@/components/layout/SiteHeader'
 import { profile } from '@/content/profile'
 import { bodyFont, headingFont } from '@/lib/fonts'
+import { siteUrl } from '@/lib/metadata'
 import { parseTheme, THEME_COOKIE_NAME } from '@/lib/theme'
 import '../src/styles/globals.css'
 
+const rootDescription = `${profile.title} targeting ${profile.targetRole} roles.`
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: {
     default: `${profile.name} - ${profile.title}`,
     template: `%s - ${profile.name}`,
   },
-  description: `${profile.title} targeting ${profile.targetRole} roles.`,
+  description: rootDescription,
+  alternates: { canonical: siteUrl },
+  openGraph: {
+    title: `${profile.name} - ${profile.title}`,
+    description: rootDescription,
+    url: siteUrl,
+    siteName: profile.name,
+    type: 'website',
+    locale: 'en_US',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `${profile.name} - ${profile.title}`,
+    description: rootDescription,
+  },
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

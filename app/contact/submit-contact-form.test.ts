@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import { HONEYPOT_FIELD_NAME, MIN_SUBMIT_MS, RENDERED_AT_FIELD_NAME } from './schema'
 import { submitContactForm } from './submit-contact-form'
 
 function buildFormData(overrides: Partial<Record<string, string>> = {}): FormData {
@@ -8,6 +9,9 @@ function buildFormData(overrides: Partial<Record<string, string>> = {}): FormDat
     company: 'Acme',
     opportunityType: 'TSE / Support Engineer',
     message: 'We have an opening that looks like a strong fit for your background.',
+    // A real submission was rendered well before it arrived, and never touched the honeypot.
+    [RENDERED_AT_FIELD_NAME]: String(Date.now() - MIN_SUBMIT_MS - 1000),
+    [HONEYPOT_FIELD_NAME]: '',
   }
   const values = { ...defaults, ...overrides }
   const formData = new FormData()
@@ -99,5 +103,44 @@ describe('submitContactForm', () => {
     if (result.status === 'error') {
       expect(result.message).toMatch(/did not respond/i)
     }
+  })
+
+  it('reports fake success without calling Formspree when the honeypot is filled', async () => {
+    const fetchMock = vi.fn()
+    vi.stubGlobal('fetch', fetchMock)
+
+    const result = await submitContactForm(
+      buildFormData({ [HONEYPOT_FIELD_NAME]: 'https://spam.example.com' }),
+      'https://formspree.io/f/test',
+    )
+
+    expect(result.status).toBe('success')
+    expect(fetchMock).not.toHaveBeenCalled()
+  })
+
+  it('reports fake success without calling Formspree when submitted faster than a human could', async () => {
+    const fetchMock = vi.fn()
+    vi.stubGlobal('fetch', fetchMock)
+
+    const result = await submitContactForm(
+      buildFormData({ [RENDERED_AT_FIELD_NAME]: String(Date.now()) }),
+      'https://formspree.io/f/test',
+    )
+
+    expect(result.status).toBe('success')
+    expect(fetchMock).not.toHaveBeenCalled()
+  })
+
+  it('reports fake success without calling Formspree when renderedAt is missing entirely', async () => {
+    const fetchMock = vi.fn()
+    vi.stubGlobal('fetch', fetchMock)
+
+    const formData = buildFormData()
+    formData.delete(RENDERED_AT_FIELD_NAME)
+
+    const result = await submitContactForm(formData, 'https://formspree.io/f/test')
+
+    expect(result.status).toBe('success')
+    expect(fetchMock).not.toHaveBeenCalled()
   })
 })

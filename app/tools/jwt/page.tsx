@@ -1,13 +1,24 @@
-import type { Metadata } from 'next'
+import { BreadcrumbJsonLd } from '@/components/JsonLd'
 import { JwtDecoder } from '@/components/tools/JwtDecoder'
+import { buildPageMetadata } from '@/lib/metadata'
 
-export const metadata: Metadata = {
+export const metadata = buildPageMetadata({
   title: 'JWT Decoder',
-}
+  description:
+    "Decode a JWT's header, claims, and expiry entirely in your browser - the token never leaves the client.",
+  path: '/tools/jwt',
+})
 
 export default function JwtToolPage() {
   return (
     <div className="flex flex-col gap-8">
+      <BreadcrumbJsonLd
+        crumbs={[
+          { name: 'Home', path: '/' },
+          { name: 'Tools', path: '/tools' },
+          { name: 'JWT Decoder', path: '/tools/jwt' },
+        ]}
+      />
       <div>
         <h1 className="reveal text-balance font-heading text-3xl font-semibold text-ink">
           JWT decoder

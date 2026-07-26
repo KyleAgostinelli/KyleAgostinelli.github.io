@@ -10,7 +10,7 @@ const profileSchema = z.object({
   github: urlString,
   linkedin: urlString,
   resumeHref: nonEmptyString,
-  avatar: urlString,
+  avatar: nonEmptyString,
   metrics: z.array(metricSchema).min(1),
   skillTags: z.array(nonEmptyString).min(1),
 })
@@ -25,9 +25,9 @@ export const profile: Profile = profileSchema.parse({
   github: 'https://github.com/KyleAgostinelli',
   linkedin: 'https://www.linkedin.com/in/kyle-agostinelli-075329237/',
   resumeHref: '/KyleAgostinelli-Resume.pdf',
-  // Hotlinked from GitHub for now; self-hosting this is tracked as a later fix so the
-  // site doesn't depend on an external host in its critical rendering path.
-  avatar: 'https://avatars.githubusercontent.com/u/185490408?v=4',
+  // Self-hosted (public/avatar.png), downloaded from the real GitHub avatar - the site no
+  // longer depends on avatars.githubusercontent.com in its rendering path.
+  avatar: '/avatar.png',
   metrics: [
     { label: '95%+ CSAT', value: 'Support quality benchmark', tone: 'success' },
     { label: '<5% transfer', value: 'Escalations kept low at scale', tone: 'info' },

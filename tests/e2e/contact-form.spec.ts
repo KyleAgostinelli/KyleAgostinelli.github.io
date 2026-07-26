@@ -7,6 +7,10 @@ test.describe('contact form', () => {
     await page.getByLabel('Name').fill('Ada')
     await page.getByLabel('Email').fill('not-an-email')
     await page.getByLabel('Message').fill('too short')
+
+    // See the comment in the test below - the anti-bot timing check runs before field
+    // validation, so even an invalid submission needs to clear it to reach that code path.
+    await page.waitForTimeout(1700)
     await page.getByRole('button', { name: 'Send message' }).click()
 
     await expect(page.getByRole('alert').first()).toBeVisible()
@@ -27,6 +31,12 @@ test.describe('contact form', () => {
     await page
       .getByLabel('Message')
       .fill('We have a TSE opening and would like to talk about your background.')
+
+    // The server action rejects anything submitted faster than a human plausibly could
+    // (see MIN_SUBMIT_MS in app/contact/schema.ts) - Playwright fills the form far quicker
+    // than that, so this waits it out rather than tripping the same anti-bot check a real
+    // spam submission would.
+    await page.waitForTimeout(1700)
     await page.getByRole('button', { name: 'Send message' }).click()
 
     // No FORMSPREE_ENDPOINT is configured in this environment, so a valid submission falls

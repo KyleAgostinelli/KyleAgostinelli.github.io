@@ -1,14 +1,24 @@
-import type { Metadata } from 'next'
+import { BreadcrumbJsonLd } from '@/components/JsonLd'
 import { experience } from '@/content/experience'
 import { skills } from '@/content/skills'
+import { buildPageMetadata } from '@/lib/metadata'
 
-export const metadata: Metadata = {
+export const metadata = buildPageMetadata({
   title: 'About',
-}
+  description:
+    'The difference between a support rep and a support engineer, and how Kyle Agostinelli has spent his career building toward the second.',
+  path: '/about',
+})
 
 export default function AboutPage() {
   return (
     <div className="flex flex-col gap-14">
+      <BreadcrumbJsonLd
+        crumbs={[
+          { name: 'Home', path: '/' },
+          { name: 'About', path: '/about' },
+        ]}
+      />
       <div>
         <h1 className="reveal text-balance font-heading text-3xl font-semibold text-ink">About</h1>
         <p className="mt-4 max-w-(--measure) text-pretty text-ink">

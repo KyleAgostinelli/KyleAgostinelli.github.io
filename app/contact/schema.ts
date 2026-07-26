@@ -9,6 +9,15 @@ export const opportunityTypes = [
   'Other technical opportunity',
 ] as const
 
+// Anti-spam fields, both invisible to a real visitor. `website` is a honeypot: real users
+// never see or fill it, so any value at all marks the submission as automated. `renderedAt`
+// is a server-rendered timestamp (see ContactForm.tsx's useState lazy initializer, which runs
+// during the initial render regardless of whether client JS ever loads) - a submission
+// arriving faster than a human could plausibly read and fill the form is treated the same way.
+export const HONEYPOT_FIELD_NAME = 'website'
+export const RENDERED_AT_FIELD_NAME = 'renderedAt'
+export const MIN_SUBMIT_MS = 1500
+
 export const contactFormSchema = z.object({
   name: z.string().trim().min(1, 'Enter your name.'),
   email: z.string().trim().pipe(z.email('Enter a valid email address.')),
