@@ -11,10 +11,15 @@ module.exports = {
       settings: {
         preset: 'perf',
         onlyCategories: ['performance', 'accessibility', 'best-practices', 'seo'],
-        // --no-sandbox: required to launch Chrome at all inside most CI runners/containers.
+        // @lhci/cli expects chromeFlags as a single space-separated STRING - it does
+        // `chromeFlags += ' --headless=new'` internally (string concatenation, not
+        // Array.push), so an array here silently stringifies to a comma-joined mess
+        // (`--no-sandbox,--headless=new`) that Chrome can't parse as separate flags.
+        // Confirmed root cause of a real CI failure: Chrome's zygote sandboxing crashed
+        // with "No usable sandbox!" because --no-sandbox was never actually reaching it.
         // --disable-dev-shm-usage: CI containers often mount a tiny /dev/shm; without this,
         // Chrome's shared-memory usage during rendering can crash the browser outright.
-        chromeFlags: ['--no-sandbox', '--headless=new', '--disable-dev-shm-usage', '--disable-gpu'],
+        chromeFlags: '--no-sandbox --disable-dev-shm-usage --disable-gpu',
       },
       url: ['http://localhost:3000/', 'http://localhost:3000/work', 'http://localhost:3000/tools'],
     },
